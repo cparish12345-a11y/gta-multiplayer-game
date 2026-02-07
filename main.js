@@ -1,12 +1,12 @@
 // ------------------ 1️⃣ FIREBASE CONFIG ------------------
 const firebaseConfig = {
-  apiKey: "AIza...YOUR_KEY...",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT.firebaseio.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "1234567890",
-  appId: "1:1234567890:web:abcdef123456"
+  apiKey: "AIzaSyBUpwKSfPr6n0dWj14nri0e83PVFVNb-2c",
+  authDomain: "gta-multiplayer-game.firebaseapp.com",
+  projectId: "gta-multiplayer-game",
+  storageBucket: "gta-multiplayer-game.firebasestorage.app",
+  messagingSenderId: "690537023893",
+  appId: "1:690537023893:web:ee65b4f1dd98283b76ce9c",
+  measurementId: "G-WR7D12188Q"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
