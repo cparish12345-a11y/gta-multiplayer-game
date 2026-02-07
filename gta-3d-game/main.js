@@ -1,143 +1,103 @@
-// ------------------ FIREBASE CONFIG ------------------
-const firebaseConfig = {
-  apiKey: "YOUR_KEY",
+// 🔥 Firebase config (REPLACE WITH YOUR OWN)
+firebase.initializeApp({
+  apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_PROJECT.firebaseapp.com",
   databaseURL: "https://YOUR_PROJECT.firebaseio.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "1234567890",
-  appId: "1:1234567890:web:abcdef123456"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+  projectId: "YOUR_PROJECT"
+});
 
-// ------------------ VARIABLES ------------------
-const playerId = Math.random().toString(36).substring(2,10);
+const db = firebase.database();
+const playerId = Math.random().toString(36).slice(2);
 let lobbyId = null;
 let players = {};
 
-const lobbyInput = document.getElementById("lobbyInput");
-const createBtn = document.getElementById("createBtn");
-const joinBtn = document.getElementById("joinBtn");
-const status = document.getElementById("status");
-
-// ------------------ THREE.JS SETUP ------------------
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x333333);
+scene.background = new THREE.Color(0x87ceeb);
 
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-camera.position.set(0, 20, 30);
-camera.lookAt(0,0,0);
+const camera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 0.1, 1000);
+camera.position.set(0, 10, 20);
 
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(innerWidth, innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Lighting
-const light = new THREE.DirectionalLight(0xffffff, 1);
-light.position.set(10,20,10);
-scene.add(light);
+// Light
+scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1));
 
-// Floor
-const floorGeo = new THREE.PlaneGeometry(100,100);
-const floorMat = new THREE.MeshPhongMaterial({color:0x555555});
-const floor = new THREE.Mesh(floorGeo, floorMat);
-floor.rotation.x = -Math.PI/2;
-scene.add(floor);
+// Ground
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(200,200),
+  new THREE.MeshStandardMaterial({color:0x228B22})
+);
+ground.rotation.x = -Math.PI/2;
+scene.add(ground);
 
-// Buildings
-const buildingGeo = new THREE.BoxGeometry(5,10,5);
-const buildingMat = new THREE.MeshPhongMaterial({color:0x888888});
-const building1 = new THREE.Mesh(buildingGeo, buildingMat);
-building1.position.set(10,5,-10);
-scene.add(building1);
+// Load humans
+const loader = new THREE.GLTFLoader();
+const meshes = {};
 
-const building2 = new THREE.Mesh(buildingGeo, buildingMat);
-building2.position.set(-15,5,15);
-scene.add(building2);
-
-// Player cubes storage
-const playerMeshes = {};
-
-// ------------------ CREATE / JOIN LOBBY ------------------
-createBtn.onclick = () => {
-  lobbyId = lobbyInput.value || Math.random().toString(36).substring(2,6);
-  const lobbyRef = db.ref("lobbies/" + lobbyId);
-
-  lobbyRef.set({
-    players: { [playerId]: { x:0, y:0, z:0, color:0x00ff00 } }
+function addHuman(id){
+  loader.load("models/human.glb", gltf => {
+    const model = gltf.scene;
+    scene.add(model);
+    meshes[id] = model;
   });
+}
 
-  listenLobby();
-  status.innerText = `Lobby created: ${lobbyId}`;
+// Controls
+const keys = {};
+onkeydown = e => keys[e.key] = true;
+onkeyup = e => keys[e.key] = false;
+
+// UI
+const lobbyInput = document.getElementById("lobby");
+const status = document.getElementById("status");
+
+document.getElementById("create").onclick = () => {
+  lobbyId = lobbyInput.value || Math.random().toString(36).slice(2,6);
+  db.ref("lobbies/"+lobbyId).set({
+    players:{}
+  });
+  joinLobby();
 };
 
-joinBtn.onclick = () => {
+document.getElementById("join").onclick = () => {
   lobbyId = lobbyInput.value;
-  if(!lobbyId) return alert("Enter a lobby ID");
-
-  const playerRef = db.ref(`lobbies/${lobbyId}/players/${playerId}`);
-  playerRef.set({ x:0, y:0, z:0, color:0x0000ff });
-
-  listenLobby();
-  status.innerText = `Joined lobby: ${lobbyId}`;
+  joinLobby();
 };
 
-// ------------------ LISTEN FOR LOBBY ------------------
-function listenLobby() {
-  const lobbyRef = db.ref("lobbies/" + lobbyId);
-  lobbyRef.on("value", snapshot => {
-    const data = snapshot.val();
-    if(!data) return;
-    players = data.players || {};
-
-    // Create meshes for new players
-    for(const [id,p] of Object.entries(players)){
-      if(!playerMeshes[id]){
-        const geo = new THREE.BoxGeometry(2,2,2);
-        const mat = new THREE.MeshPhongMaterial({color:p.color});
-        const mesh = new THREE.Mesh(geo, mat);
-        scene.add(mesh);
-        playerMeshes[id] = mesh;
-      }
+function joinLobby(){
+  status.innerText = "Lobby: " + lobbyId;
+  db.ref(`lobbies/${lobbyId}/players/${playerId}`).set({x:0,z:0});
+  db.ref(`lobbies/${lobbyId}/players`).on("value", snap=>{
+    players = snap.val() || {};
+    for(const id in players){
+      if(!meshes[id]) addHuman(id);
     }
   });
 }
 
-// ------------------ PLAYER MOVEMENT ------------------
-const keys = { w:[0,0,-0.5], s:[0,0,0.5], a:[-0.5,0,0], d:[0.5,0,0] };
-document.addEventListener("keydown", e=>{
-  if(!players[playerId]) return;
-  if(!keys[e.key]) return;
-
-  const move = keys[e.key];
-  players[playerId].x += move[0];
-  players[playerId].y += move[1];
-  players[playerId].z += move[2];
-
-  db.ref(`lobbies/${lobbyId}/players/${playerId}`).update({
-    x: players[playerId].x,
-    y: players[playerId].y,
-    z: players[playerId].z
-  });
-});
-
-// ------------------ ANIMATION LOOP ------------------
+// Game loop
 function animate(){
   requestAnimationFrame(animate);
 
-  for(const [id, p] of Object.entries(players)){
-    const mesh = playerMeshes[id];
-    if(mesh){
-      mesh.position.set(p.x, p.y+1, p.z); // y+1 so cube sits on floor
-    }
+  if(players[playerId]){
+    let p = players[playerId];
+    if(keys["w"]) p.z -= 0.1;
+    if(keys["s"]) p.z += 0.1;
+    if(keys["a"]) p.x -= 0.1;
+    if(keys["d"]) p.x += 0.1;
+
+    db.ref(`lobbies/${lobbyId}/players/${playerId}`).update(p);
+
+    camera.position.set(p.x, 10, p.z + 20);
+    camera.lookAt(p.x, 0, p.z);
   }
 
-  // Camera follows local player
-  if(players[playerId]){
-    const p = players[playerId];
-    camera.position.set(p.x, 20, p.z+30);
-    camera.lookAt(p.x,0,p.z);
+  for(const id in players){
+    if(meshes[id]){
+      meshes[id].position.set(players[id].x,0,players[id].z);
+    }
   }
 
   renderer.render(scene, camera);
