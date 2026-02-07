@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GTA Multiplayer Game</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: #87ceeb; }
+    #info { position: absolute; top: 10px; left: 10px; color: white; font-family: sans-serif; }
+  </style>
+</head>
+<body>
+  <div id="info">
+    <p>Use W/A/S/D to move</p>
+    <p>Click to shoot</p>
+    <p>Press E to enter/exit car</p>
+    <p>Press 1/2/3 to switch weapons</p>
+  </div>
+
+  <!-- Socket.io CDN -->
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <!-- Three.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158/build/three.min.js"></script>
+
+  <!-- Game logic -->
+  <script src="main.js"></script>
+</body>
+</html>
