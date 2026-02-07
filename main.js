@@ -13,6 +13,7 @@ let players = {};
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x87ceeb);
+
 // TEST OBJECT (you should see this)
 const cube = new THREE.Mesh(
   new THREE.BoxGeometry(5,5,5),
