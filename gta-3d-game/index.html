@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>3D GTA Prototype</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Three.js -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.min.js"></script>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+  <script src="main.js" defer></script>
+</head>
+<body>
+  <div id="ui">
+    <input id="lobbyInput" placeholder="Lobby ID">
+    <button id="createBtn">Create Lobby</button>
+    <button id="joinBtn">Join Lobby</button>
+    <span id="status"></span>
+  </div>
+</body>
+</html>
