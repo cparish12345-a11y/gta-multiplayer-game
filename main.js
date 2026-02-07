@@ -1,3 +1,5 @@
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.js";
+
 // Scene
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x87ceeb);
@@ -11,13 +13,12 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 // Renderer
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 // Lights
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
-scene.add(ambientLight);
+scene.add(new THREE.AmbientLight(0xffffff, 0.7));
 
 const dirLight = new THREE.DirectionalLight(0xffffff, 1);
 dirLight.position.set(10, 20, 10);
@@ -31,7 +32,7 @@ const ground = new THREE.Mesh(
 ground.rotation.x = -Math.PI / 2;
 scene.add(ground);
 
-// 🔴 TEST CUBE (YOU SHOULD SEE THIS)
+// 🔴 TEST CUBE
 const cube = new THREE.Mesh(
   new THREE.BoxGeometry(5, 5, 5),
   new THREE.MeshStandardMaterial({ color: 0xff0000 })
