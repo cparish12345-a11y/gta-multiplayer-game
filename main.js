@@ -13,6 +13,14 @@ let players = {};
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x87ceeb);
+// TEST OBJECT (you should see this)
+const cube = new THREE.Mesh(
+  new THREE.BoxGeometry(5,5,5),
+  new THREE.MeshStandardMaterial({ color: 0xff0000 })
+);
+cube.position.set(0, 2.5, 0);
+scene.add(cube);
+
 
 const camera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 0.1, 1000);
 camera.position.set(0, 15, 25);
