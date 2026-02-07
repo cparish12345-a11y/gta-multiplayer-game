@@ -1,15 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>GTA Multiplayer Lobby Demo</title>
-  <style>
-    body { margin:0; background:#111; color:white; font-family:Arial,sans-serif; }
-    canvas { display:block; margin:0 auto; background:#333; }
-    #ui { text-align:center; margin:10px; }
-    #ui input, #ui button { margin:2px; padding:5px; }
-  </style>
+  <title>GTA Browser Multiplayer</title>
+  <link rel="stylesheet" href="style.css">
 
-  <!-- Firebase SDK -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
@@ -17,11 +12,12 @@
 </head>
 <body>
   <div id="ui">
-    <input id="lobbyInput" placeholder="Enter Lobby ID">
+    <input id="lobbyInput" placeholder="Lobby ID">
     <button id="createBtn">Create Lobby</button>
     <button id="joinBtn">Join Lobby</button>
     <span id="status"></span>
   </div>
-  <canvas id="gameCanvas" width="600" height="400"></canvas>
+  <canvas id="gameCanvas" width="800" height="600"></canvas>
 </body>
 </html>
+
