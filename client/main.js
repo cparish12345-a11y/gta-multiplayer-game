@@ -1,5 +1,5 @@
 // ====== SOCKET.IO ======
-const socket = io("https://YOUR-RENDER-URL"); // replace with your Render URL
+const socket = io("https://gta-multiplayer-game.onrender.com"); // replace with your Render URL
 
 // ====== THREE.JS SETUP ======
 const scene = new THREE.Scene();
